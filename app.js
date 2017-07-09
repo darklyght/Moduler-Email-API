@@ -18,6 +18,6 @@ app.use(basic_auth({
  
 var routes = require("./routes/routes.js")(app);
  
-var server = app.listen(6000, function () {
+var server = app.listen(4000, function () {
   console.log("Listening on port %s...", server.address().port);
 });
