@@ -20,7 +20,7 @@ var appRouter = function(app) {
   });
   app.post('/mail', function(req, res) {
     if (!req.query.from || !req.query.to || !req.query.subject || !req.query.text) {
-      return res.send({'status': 'error', 'message': 'Missing field.'});
+      return res.status(400).send({'status': 'error', 'message': 'Missing field.'});
     }
     var mailOptions = {
       from: req.query.from,
@@ -30,9 +30,9 @@ var appRouter = function(app) {
     }
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-          return res.send({'status': 'error', 'message': error});
+          return res.status(500).send({'status': 'error', 'message': error});
       }
-      return res.send({'status': 'success', 'message': ('Message %s sent: %s', info.messageId, info.response)});
+      return res.status(200).send({'status': 'success', 'message': ('Message %s sent: %s', info.messageId, info.response)});
     })
   });
 }
