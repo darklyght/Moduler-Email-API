@@ -19,6 +19,8 @@ var appRouter = function(app) {
     next();
   });
   app.post('/mail', function(req, res) {
+    // console.log('Success')
+    // return res.sendStatus(200)
     if (!req.query.from || !req.query.to || !req.query.subject || !req.query.text) {
       return res.status(400).send({'status': 'error', 'message': 'Missing field.'});
     }
@@ -26,10 +28,21 @@ var appRouter = function(app) {
       from: req.query.from,
       to: req.query.to,
       subject: req.query.subject,
-      html: req.query.text
+      html: req.query.text,
+      attachments: [
+        {
+          filename: req.query.attachment_filename
+        }
+      ]
+    }
+    if (req.query.attachment_type === 'pdf' || req.query.attachment_type === 'png') {
+      mailOptions.attachments[0].path = req.query.attachment_content
+    } else if (req.query.attachment_type === 'csv') {
+      mailOptions.attachments[0].content = req.query.attachment_content
     }
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
+          console.log(error)
           return res.status(500).send({'status': 'error', 'message': error});
       }
       return res.status(200).send({'status': 'success', 'message': ('Message %s sent: %s', info.messageId, info.response)});
